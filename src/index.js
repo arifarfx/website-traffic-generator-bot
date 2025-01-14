@@ -112,7 +112,7 @@ function launch() {
         .then(() => {
           powertools.execute(`which restart-manager`).then(output => {
             if (!output) {
-              error('restart-manager not found. Please install it manually.');
+              error('restart-manager not found. Please install it manually or ensure it is available in your PATH.');
             } else {
               powertools.execute(`restart-manager`).catch(e => {console.error(e)})
             }
@@ -125,15 +125,9 @@ function launch() {
     }
   } catch (e) {
     error('Application failed to execute:', e);
-    console.log('\n\n\n')
     log(`Please launch the app manually: ${location}`);
   }
 }
-
 function log() {
   console.log(`[${new Date().toLocaleTimeString()}]`, ...arguments)
-}
-
-function error() {
-  console.error(`[${new Date().toLocaleTimeString()}]`, ...arguments)
 }
