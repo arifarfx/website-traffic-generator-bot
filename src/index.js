@@ -1,4 +1,4 @@
-  // Modules
+// Modules
 const os = require('os');
 const fs = require('fs-jetpack');
 const path = require('path');
@@ -44,7 +44,7 @@ function clear() {
   fs.remove(location);
 }
 
-function download(location) {
+function download() {
   return new Promise(async function(resolve, reject) {
     const location = getDownloadPath();
     const url = getURL();
@@ -108,10 +108,20 @@ function launch() {
 
         })
     } else {
-      powertools.execute(`sudo apt install "${location}"`)
+      powertools.execute(`sudo apt install -y "${location}"`)
         .then(() => {
-          powertools.execute(`restart-manager`).catch(e => {console.error(e)})
-        })
+          powertools.execute(`which restart-manager`).then(output => {
+            if (!output) {
+              error('restart-manager not found. Please install it manually.');
+            } else {
+              powertools.execute(`restart-manager`).catch(e => {console.error(e)})
+            }
+          }).catch(e => {
+            error('Failed to check for restart-manager:', e);
+          })
+        }).catch(e => {
+          error('Failed to install the application:', e);
+        });
     }
   } catch (e) {
     error('Application failed to execute:', e);
